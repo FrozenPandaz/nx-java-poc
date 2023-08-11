@@ -1,0 +1,9 @@
+plugins {
+    id 'project-report'
+}
+
+group = "<%= name %>"
+
+allprojects {
+    apply plugin: 'project-report'
+}

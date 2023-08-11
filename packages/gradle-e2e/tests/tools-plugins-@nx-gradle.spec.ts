@@ -73,7 +73,7 @@ function createTestProject(projectName: string, projectDirectory: string) {
     recursive: true,
   });
 
-  execSync(`npx --yes nx@latest init --useDotNxInstallation --no-interactive`, {
+  execSync(`npx --yes nx@next init --useDotNxInstallation --no-interactive`, {
     cwd: projectDirectory,
     stdio: 'inherit',
     env: process.env,
