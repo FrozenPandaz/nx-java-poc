@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
-import { join, dirname } from 'path';
-import { mkdirSync, rmSync } from 'fs';
+import { join } from 'path';
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 
 describe('tools-plugins-@nx-gradle', () => {
   let projectDirectory: string;
@@ -9,6 +9,7 @@ describe('tools-plugins-@nx-gradle', () => {
     return execSync(command, {
       cwd: projectDirectory,
       stdio: 'inherit',
+      env: process.env,
     });
   }
 
@@ -23,14 +24,18 @@ describe('tools-plugins-@nx-gradle', () => {
     });
 
     projectDirectory = createTestProject(projectName, projectDirectory);
+    execInTestProject(`git init`);
 
-    // The plugin has been built and published to a local registry in the jest globalSetup
-    // Install the plugin built with the latest source code into the test repo
-    execSync(`npm install @nx/gradle@e2e`, {
-      cwd: projectDirectory,
-      stdio: 'inherit',
-      env: process.env,
-    });
+    const nxJson = JSON.parse(
+      readFileSync(join(projectDirectory, 'nx.json')).toString()
+    );
+    nxJson.installation.plugins = {
+      '@nx/gradle': 'e2e',
+    };
+    writeFileSync(
+      join(projectDirectory, 'nx.json'),
+      JSON.stringify(nxJson, null, 2)
+    );
   });
 
   afterAll(() => {
@@ -40,10 +45,10 @@ describe('tools-plugins-@nx-gradle', () => {
   it('should setup a gradle project', () => {
     ['java', 'groovy', 'kotlin'].forEach((language, index) => {
       execInTestProject(
-        `nx g @nx/gradle:application app-${language} --language=${language} --dsl=groovy --sourcePackage=com.app${index} --rootProjectName=test`
+        `./nx g @nx/gradle:application app-${language} --language=${language} --dsl=groovy --sourcePackage=com.app${index} --rootProjectName=test`
       );
       execInTestProject(
-        `nx g @nx/gradle:library lib-${language} --language=${language} --dsl=groovy --sourcePackage=com.app${index} --rootProjectName=test`
+        `./nx g @nx/gradle:library lib-${language} --language=${language} --dsl=groovy --sourcePackage=com.app${index} --rootProjectName=test`
       );
 
       execInTestProject(`nx build app-${language}`);
@@ -64,18 +69,15 @@ function createTestProject(projectName: string, projectDirectory: string) {
     recursive: true,
     force: true,
   });
-  mkdirSync(dirname(projectDirectory), {
+  mkdirSync(projectDirectory, {
     recursive: true,
   });
 
-  execSync(
-    `npx --yes create-nx-workspace@latest ${projectName} --preset empty --no-nxCloud --no-interactive`,
-    {
-      cwd: dirname(projectDirectory),
-      stdio: 'inherit',
-      env: process.env,
-    }
-  );
+  execSync(`npx --yes nx@latest init --useDotNxInstallation --no-interactive`, {
+    cwd: projectDirectory,
+    stdio: 'inherit',
+    env: process.env,
+  });
   console.log(`Created test project in "${projectDirectory}"`);
 
   return projectDirectory;
