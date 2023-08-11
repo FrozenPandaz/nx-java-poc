@@ -1,8 +1,8 @@
 import { execSync } from 'child_process';
-import { join, dirname } from 'path';
+import { join } from 'path';
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'fs';
 
-describe('tools-plugins-@nx-gradle', () => {
+describe('tools-plugins-@nx-ktor', () => {
   let projectDirectory: string;
 
   function execInTestProject(command: string) {
@@ -49,17 +49,11 @@ describe('tools-plugins-@nx-gradle', () => {
     execInTestProject(
       `./nx g @nx/ktor:library lib --sourcePackage=com.example --rootProjectName=test`
     );
-    execInTestProject(`./nx g @nx/ktor:copy-project api-copy --project=api`);
-    execInTestProject(`./nx g @nx/ktor:copy-project lib-copy --project=lib`);
 
     execInTestProject(`./nx build api`);
     execInTestProject(`./nx build lib`);
     execInTestProject(`./nx test api`);
     execInTestProject(`./nx test lib`);
-    execInTestProject(`./nx build api-copy`);
-    execInTestProject(`./nx build lib-copy`);
-    execInTestProject(`./nx test api-copy`);
-    execInTestProject(`./nx test lib-copy`);
   });
 });
 

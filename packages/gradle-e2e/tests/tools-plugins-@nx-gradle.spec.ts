@@ -50,11 +50,21 @@ describe('tools-plugins-@nx-gradle', () => {
       execInTestProject(
         `./nx g @nx/gradle:library lib-${language} --language=${language} --dsl=groovy --sourcePackage=com.app${index} --rootProjectName=test`
       );
+      execInTestProject(
+        `./nx g @nx/gradle:copy-project app-${language}-copy --project=app-${language}`
+      )
+      execInTestProject(
+        `./nx g @nx/gradle:copy-project lib-${language}-copy --project=lib-${language}`
+      )
 
       execInTestProject(`nx build app-${language}`);
       execInTestProject(`nx build lib-${language}`);
+      execInTestProject(`nx build app-${language}-copy`);
+      execInTestProject(`nx build lib-${language}-copy`);
       execInTestProject(`nx test app-${language}`);
       execInTestProject(`nx test lib-${language}`);
+      execInTestProject(`nx test app-${language}-copy`);
+      execInTestProject(`nx test lib-${language}-copy`);
     });
   });
 });

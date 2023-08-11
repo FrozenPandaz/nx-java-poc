@@ -19,6 +19,11 @@
       "factory": "./src/generators/gradle-project/generator",
       "schema": "./src/generators/gradle-project/schema.json",
       "description": "gradle-project generator"
+    },
+    "copy-project": {
+      "factory": "./src/generators/copy-project/generator",
+      "schema": "./src/generators/copy-project/schema.json",
+      "description": "copy project generator"
     }
   }
 }

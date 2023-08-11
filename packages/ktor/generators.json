@@ -14,11 +14,6 @@
       "factory": "./src/generators/library/generator",
       "schema": "./src/generators/library/schema.json",
       "description": "library generator"
-    },
-    "copy-project": {
-      "factory": "./src/generators/copy-project/generator",
-      "schema": "./src/generators/copy-project/schema.json",
-      "description": "copy project generator"
     }
   }
 }
